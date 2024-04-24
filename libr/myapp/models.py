@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 # Create your models here.
 
 
@@ -27,6 +27,7 @@ class Book(models.Model):
     statu = models.CharField(
         max_length=200, choices=StatusChoice.choices, null=False, blank=False
     )
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.title
@@ -38,7 +39,8 @@ class Student(models.Model):
     birth_date = models.DateField(auto_now=False)
     birth_place = models.CharField(max_length=200, blank=False, null=False)
     class_name = models.CharField(max_length=200, blank=False, null=False)
-
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    
     def __str__(self):
         return self.first_name
 
@@ -51,7 +53,7 @@ class RentBook(models.Model):
     rent_statu = models.CharField(
         max_length=200, choices=RentChoice.choices, null=False, blank=False
     )
-
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 
 class Archive(models.Model):
     first_name = models.CharField(max_length=200, blank=False, null=False)
@@ -60,6 +62,7 @@ class Archive(models.Model):
     birth_place = models.CharField(max_length=200, blank=False, null=False)
     class_name = models.CharField(max_length=200, blank=False, null=False)
     document_name = models.CharField(max_length=200, blank=False, null=False)
-
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    
     def __str__(self):
         return self.first_name

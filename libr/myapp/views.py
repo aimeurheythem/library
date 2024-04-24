@@ -7,7 +7,7 @@ from .models import *
 from rest_framework.permissions import IsAuthenticated
 
 
-# create new_book
+# create new book
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def add_book(request):
@@ -81,7 +81,7 @@ def delete_book(request, pk):
 
     book.delete()
     return Response(
-        {"details": "Delete Done Successfully!!"}, status=status.HTTP_200_OK
+        {"details": "Delete Book Successfully!!"}, status=status.HTTP_200_OK
     )
 
 
@@ -94,7 +94,7 @@ def add_student(request):
 
     if serializer.is_valid():
         new_student = Student.objects.create(**data, user=request.user)
-        result = BookSerializer(new_student, many=False)
+        result = StudentSerializer(new_student, many=False)
         return Response({"New_Student": result.data})
     else:
         return Response(serializer.errors)
@@ -109,6 +109,49 @@ def getStudent(request):
     return Response({"Students": serializer_student.data})
 
 
+# updating student data
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def update_student(request, pk):
+    student = get_object_or_404(Student, id=pk)
+
+    # in case the user want make update, is not the user who is authentificated now.
+    if student.user != request.user:
+        return Response(
+            {"Error": "Sorry, you can't update this student!"},
+            status=status.Http_403_FORBIDEN,
+        )
+
+    student.first_name = request.data["first_name"]
+    student.last_name = request.data["last_name"]
+    student.birth_date = request.data["birth_date"]
+    student.birth_place = request.data["birth_place"]
+    student.class_name = request.data["class_name"]
+
+    student.save()
+    serializer = StudentSerializer(student, many=False)
+    return Response({"student": serializer.data})
+
+
+# delete student
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def delete_student(request, pk):
+    student = get_object_or_404(Student, id=pk)
+
+    # in case the user want make update, is not the user who is authentificated now.
+    if student.user != request.user:
+        return Response(
+            {"Error": "Sorry, you can't delete this student!"},
+            status=status.Http_403_FORBIDEN,
+        )
+
+    student.delete()
+    return Response(
+        {"details": "Delete Student Successfully!!"}, status=status.HTTP_200_OK
+    )
+
+
 # create new archive model
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -117,9 +160,9 @@ def add_archive(request):
     serializer = ArchiveSerializer(data=data)
 
     if serializer.is_valid():
-        new_book = Archive.objects.create(**data, user=request.user)
-        result = ArchiveSerializer(new_book, many=False)
-        return Response({"New_Archive": result.data})
+        new = Archive.objects.create(**data, user=request.user)
+        result = ArchiveSerializer(new, many=False)
+        return Response({"Archive": result.data})
     else:
         return Response(serializer.errors)
 
@@ -131,6 +174,50 @@ def getArchive(request):
     archive = Archive.objects.all().order_by("id")
     serilizer_archive = ArchiveSerializer(archive, many=True)
     return Response({"Archive": serilizer_archive.data})
+
+
+# updating archive data
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def update_archive(request, pk):
+    archive = get_object_or_404(Archive, id=pk)
+
+    # in case the user want make update, is not the user who is authentificated now.
+    if archive.user != request.user:
+        return Response(
+            {"Error": "Sorry, you can't update this archive model!"},
+            status=status.Http_403_FORBIDEN,
+        )
+
+    archive.first_name = request.data["first_name"]
+    archive.last_name = request.data["last_name"]
+    archive.birth_date = request.data["birth_date"]
+    archive.birth_place = request.data["birth_place"]
+    archive.class_name = request.data["class_name"]
+    archive.document_name = request.data["document_name"]
+
+    archive.save()
+    serializer = StudentSerializer(archive, many=False)
+    return Response({"student": serializer.data})
+
+
+# delete archive model
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def delete_archive(request, pk):
+    archive = get_object_or_404(Archive, id=pk)
+
+    # in case the user want make update, is not the user who is authentificated now.
+    if archive.user != request.user:
+        return Response(
+            {"Error": "Sorry, you can't delete this archive model!"},
+            status=status.Http_403_FORBIDEN,
+        )
+
+    archive.delete()
+    return Response(
+        {"details": "Delete Archive model Successfully!!"}, status=status.HTTP_200_OK
+    )
 
 
 # create new rented book model
@@ -155,3 +242,46 @@ def getRentBook(request):
     rent_book = RentBook.objects.all().order_by("id")
     serializer_rent = RentSerializer(rent_book, many=True)
     return Response({"Rented": serializer_rent.data})
+
+
+# updating rented books data
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def update_rentedBooks(request, pk):
+    rent = get_object_or_404(RentBook, id=pk)
+
+    # in case the user want make update, is not the user who is authentificated now.
+    if rent.user != request.user:
+        return Response(
+            {"Error": "Sorry, you can't update this rented model!"},
+            status=status.Http_403_FORBIDEN,
+        )
+
+    rent.book_id = request.data["first_name"]
+    rent.student_id = request.data["last_name"]
+    rent.rent_date = request.data["birth_date"]
+    rent.return_date = request.data["birth_place"]
+    rent.rent_statu = request.data["class_name"]
+
+    rent.save()
+    serializer = StudentSerializer(rent, many=False)
+    return Response({"student": serializer.data})
+
+
+# delete rented books model
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def delete_rentedBook(request, pk):
+    rent = get_object_or_404(RentBook, id=pk)
+
+    # in case the user want make update, is not the user who is authentificated now.
+    if rent.user != request.user:
+        return Response(
+            {"Error": "Sorry, you can't delete this rented book!"},
+            status=status.Http_403_FORBIDEN,
+        )
+
+    rent.delete()
+    return Response(
+        {"details": "Delete rented book Successfully!!"}, status=status.HTTP_200_OK
+    )

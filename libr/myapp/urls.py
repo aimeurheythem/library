@@ -12,14 +12,34 @@ urlpatterns = [
     path("books/update/<str:pk>/", update_book, name="update_book"),
     # delete book
     path("books/delete/<str:pk>/", delete_book, name="delete_book"),
+    
+    
     # get students
     path("students/", getStudent, name="student"),
     # add new student
-    path("students/add/", add_student, name="add_student"),
+    path("student/add/", add_student, name="add_student"),
+    # update student
+    path("student/update/", update_student, name="update_student"),
+    # delete student
+    path("student/delete/", delete_student, name="delete_student"),
+    
+    
     # get archive
     path("archive/", getArchive, name="archive"),
+    # add archive
+    path("archive/add/", add_archive, name="add_archive"),
+    # update archive
+    path("archive/update/", update_archive, name="update_archive"),
+    # delete archive
+    path("archive/delete/", delete_archive, name="delete_archive"),
+    
+    
     # get rented books
     path("rentedbooks/", getRentBook, name="rented_books"),
     # create a rent book model
     path("rentbook/", rentBook, name="rent_book"),
+    # update rented book
+    path("rentbook/update", update_rentedBooks, name="update_rented_book"),
+    # delete rented book
+    path("rentbook/delete", delete_rentedBook, name="delete_rented_book"),
 ]

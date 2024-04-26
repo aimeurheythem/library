@@ -19,9 +19,9 @@ urlpatterns = [
     # add new student
     path("student/add/", add_student, name="add_student"),
     # update student
-    path("student/update/", update_student, name="update_student"),
+    path("student/update/<str:pk>/", update_student, name="update_student"),
     # delete student
-    path("student/delete/", delete_student, name="delete_student"),
+    path("student/delete/<str:pk>/", delete_student, name="delete_student"),
     
     
     # get archive
@@ -29,9 +29,9 @@ urlpatterns = [
     # add archive
     path("archive/add/", add_archive, name="add_archive"),
     # update archive
-    path("archive/update/", update_archive, name="update_archive"),
+    path("archive/update/<str:pk>/", update_archive, name="update_archive"),
     # delete archive
-    path("archive/delete/", delete_archive, name="delete_archive"),
+    path("archive/delete/<str:pk>/", delete_archive, name="delete_archive"),
     
     
     # get rented books
@@ -39,7 +39,7 @@ urlpatterns = [
     # create a rent book model
     path("rentbook/", rentBook, name="rent_book"),
     # update rented book
-    path("rentbook/update", update_rentedBooks, name="update_rented_book"),
+    path("rentbook/update/<str:pk>/", update_rentedBooks, name="update_rented_book"),
     # delete rented book
-    path("rentbook/delete", delete_rentedBook, name="delete_rented_book"),
+    path("rentbook/delete/<str:pk>/", delete_rentedBook, name="delete_rented_book"),
 ]

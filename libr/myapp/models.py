@@ -9,11 +9,6 @@ class StatusChoice(models.TextChoices):
     LOST = "lost"
 
 
-class RentChoice(models.TextChoices):
-    RETRIEVER = "retriever"
-    NOTRETRIEVER = "notretriever"
-
-
 class Book(models.Model):
     title = models.CharField(max_length=200, blank=False)
     author = models.CharField(max_length=200, blank=True, null=True)
@@ -50,9 +45,7 @@ class RentBook(models.Model):
     student_id = models.ForeignKey(Student, on_delete=models.CASCADE)
     rent_date = models.DateField(auto_now=False)
     return_date = models.DateField(auto_now=False)
-    rent_statu = models.CharField(
-        max_length=200, choices=RentChoice.choices, null=False, blank=False
-    )
+    rent_statu = models.BooleanField(True, max_length=200, default='')
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 
 class Archive(models.Model):

@@ -60,6 +60,7 @@ def update_book(request, pk):
     book.class_number = request.data["class_number"]
     book.entry_date = request.data["entry_date"]
     book.published_date = request.data["published_date"]
+    book.statu = request.data["statu"]
 
     book.save()
     serializer = BookSerializer(book, many=False)
@@ -197,8 +198,8 @@ def update_archive(request, pk):
     archive.document_name = request.data["document_name"]
 
     archive.save()
-    serializer = StudentSerializer(archive, many=False)
-    return Response({"student": serializer.data})
+    serializer = ArchiveSerializer(archive, many=False)
+    return Response({"Archive": serializer.data})
 
 
 # delete archive model
@@ -228,9 +229,14 @@ def rentBook(request):
     serializer = RentSerializer(data=data)
 
     if serializer.is_valid():
-        rentBook = RentBook.objects.create(**data, user=request.user)
+        book = get_object_or_404(Book, id=data.pop("book_id"))
+        student = get_object_or_404(Student, id=data.pop("student_id"))
+
+        rentBook = RentBook.objects.create(
+            **data, book_id=book, student_id=student, user=request.user
+        )
         result = RentSerializer(rentBook, many=False)
-        return Response({"Rente Book": result.data})
+        return Response({"Rent Book": result.data})
     else:
         return Response(serializer.errors)
 
@@ -261,11 +267,11 @@ def update_rentedBooks(request, pk):
     rent.student_id = request.data["last_name"]
     rent.rent_date = request.data["birth_date"]
     rent.return_date = request.data["birth_place"]
-    rent.rent_statu = request.data["class_name"]
+    rent.rent_statu = request.data["statu"]
 
     rent.save()
-    serializer = StudentSerializer(rent, many=False)
-    return Response({"student": serializer.data})
+    serializer = RentSerializer(rent, many=False)
+    return Response({"rented book updates": serializer.data})
 
 
 # delete rented books model

@@ -42,4 +42,14 @@ urlpatterns = [
     path("rentbook/update/<str:pk>/", update_rentedBooks, name="update_rented_book"),
     # delete rented book
     path("rentbook/delete/<str:pk>/", delete_rentedBook, name="delete_rented_book"),
+    
+    # create Library card
+    path("librarycard/create/", libraryCard, name="library_card"),
+    # get library cards
+    path("librarycards/", getLibraryCard, name="library_cards"),
+    # update library cards
+    path("librarycard/update/<str:pk>/", updateLibraryCard, name="update_library_cards"),
+    # delete library cards
+    path("librarycard/delete/<str:pk>/", deleteLibraryCard, name="delete_library_cards"),
+    
 ]

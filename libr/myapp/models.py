@@ -45,7 +45,7 @@ class RentBook(models.Model):
     student_id = models.ForeignKey(Student, on_delete=models.CASCADE)
     rent_date = models.DateField(auto_now=False)
     return_date = models.DateField(auto_now=False)
-    rent_statu = models.BooleanField(True, max_length=200, default='')
+    isRented = models.BooleanField(True, max_length=200, default='')
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 
 class Archive(models.Model):
@@ -59,3 +59,13 @@ class Archive(models.Model):
     
     def __str__(self):
         return self.first_name
+
+
+class LibraryCard(models.Model):
+    student_id = models.ForeignKey(Student, on_delete=models.CASCADE)
+    collegeYear = models.DateField(auto_now=False)
+    isValid = models.BooleanField(True, max_length=200, default='')
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    
+    def __str__(self):
+        return self.isValid

@@ -24,3 +24,9 @@ class ArchiveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Archive
         fields = "__all__"
+
+
+class LibraryCardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LibraryCard
+        fields = "__all__"

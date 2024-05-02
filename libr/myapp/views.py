@@ -26,7 +26,7 @@ def add_book(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def getBook(request):
-    book = Book.objects.all().order_by("id")
+    book = Book.objects.filter(user=request.user).order_by("id")
     serializer_book = BookSerializer(book, many=True)
     return Response({"Books": serializer_book.data})
 
@@ -105,7 +105,7 @@ def add_student(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def getStudent(request):
-    student = Student.objects.all().order_by("id")
+    student = Student.objects.filter(user=request.user).order_by("id")
     serializer_student = StudentSerializer(student, many=True)
     return Response({"Students": serializer_student.data})
 
@@ -172,7 +172,7 @@ def add_archive(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def getArchive(request):
-    archive = Archive.objects.all().order_by("id")
+    archive = Archive.objects.filter(user=request.user).order_by("id")
     serilizer_archive = ArchiveSerializer(archive, many=True)
     return Response({"Archive": serilizer_archive.data})
 
@@ -245,7 +245,7 @@ def rentBook(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def getRentBook(request):
-    rent_book = RentBook.objects.all().order_by("id")
+    rent_book = RentBook.objects.filter(user=request.user).order_by("id")
     serializer_rent = RentSerializer(rent_book, many=True)
     return Response({"Rented": serializer_rent.data})
 
@@ -260,14 +260,14 @@ def update_rentedBooks(request, pk):
     if rent.user != request.user:
         return Response(
             {"Error": "Sorry, you can't update this rented model!"},
-            status=status.Http_403_FORBIDEN,
+            status=status.HTTP_401_UNAUTHORIZED,
         )
 
-    rent.book_id = request.data["first_name"]
-    rent.student_id = request.data["last_name"]
-    rent.rent_date = request.data["birth_date"]
-    rent.return_date = request.data["birth_place"]
-    rent.rent_statu = request.data["statu"]
+    # rent.book_id = request.data["book_id"]
+    # rent.student_id = request.data["student_id"]
+    rent.rent_date = request.data["rent_date"]
+    rent.return_date = request.data["return_date"]
+    rent.isRented = request.data["isRented"]
 
     rent.save()
     serializer = RentSerializer(rent, many=False)
@@ -291,3 +291,81 @@ def delete_rentedBook(request, pk):
     return Response(
         {"details": "Delete rented book Successfully!!"}, status=status.HTTP_200_OK
     )
+
+
+# create new rented book model
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def libraryCard(request):
+    data = request.data
+    serializer = LibraryCardSerializer(data=data)
+
+    if serializer.is_valid():
+        student = get_object_or_404(Student, id=data.pop("student_id"))
+
+        libraryCard = LibraryCard.objects.create(
+            **data, student_id=student, user=request.user
+        )
+        result = LibraryCardSerializer(libraryCard, many=False)
+        return Response({"Library Card": result.data})
+    else:
+        return Response(serializer.errors)
+
+
+# get all library cards
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def getLibraryCard(request):
+    libraryCard = LibraryCard.objects.filter(user=request.user)
+    serializer_card = LibraryCardSerializer(libraryCard, many=True)
+    return Response({"Library Cards": serializer_card.data})
+
+# get all library cards
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def updateLibraryCard(request, pk):
+    library_card = get_object_or_404(LibraryCard, id=pk)
+    
+    if library_card.user != request.user:
+        return Response(
+            {"Error: You can't make an update uperation for this library card"},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+        
+    library_card.collegeYear = request.data['collegeYear']
+    library_card.isValid = request.data['isValid']
+    
+    library_card.save()
+    serializer = LibraryCardSerializer(library_card, many=False)
+    return Response({'Library Card Updated': serializer.data})    
+
+# delete library cards
+@api_view(["delete"])
+@permission_classes([IsAuthenticated])
+def deleteLibraryCard(request, pk):
+    card = get_object_or_404(LibraryCard, id=pk)
+    
+    if card.user != request.user:
+        return Response(
+            {"Error": "Sorry you can't make a delete operation, you are not authentificated"},
+            status=status.HTTP_403_FORBIDDEN
+        )
+    card.delete()
+    return Response(
+        {"Details": "A Library Card has been deleted succesfully"},
+        status=status.HTTP_200_OK
+    )
+    
+# delete all library cards
+@api_view(["delete"])
+@permission_classes([IsAuthenticated])
+def deleteAllLibraryCard(request):
+    try:
+        LibraryCard.objects.all().delete()
+        return Response(
+            {"Response": "All library Cards have been deleted"},
+            status=status.HTTP_200_OK
+            )
+    except Exception as e:
+        return Response({"Error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
